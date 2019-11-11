@@ -55,14 +55,15 @@ public class SampleContent {
     }
 
     public static void createIdea(Idea item) {
-        COUNT += 1;
+        COUNT += 1;  //increment the Idea counter.
         item.setId(COUNT);
-        IDEAS.add(item);
+        IDEAS.add(item);   //add idea to the List of Ideas.
     }
 
     public static Idea getIdeaById(int id){
         for(int i = 0; i < IDEAS.size(); i++){
             if(IDEAS.get(i).getId() == id){
+                //Return an idea whose idea.getId() equals the id we are searching for.
                 return IDEAS.get(i);
             }
         }
@@ -75,6 +76,7 @@ public class SampleContent {
 
         for(int i = 0; i < IDEAS.size(); i++){
             if(IDEAS.get(i).getId() == id){
+                //return an idea whose idea.getId() matches the ID we are searching. (idea.getId() == id)
                 ideaToRemove = IDEAS.get(i);
             }
         }
