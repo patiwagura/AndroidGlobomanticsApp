@@ -16,9 +16,9 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        //google()  //For Android studio 3.0.0 and above.
+        //google()  //For Android studio 3.0.0 and above use google() in repositories.
 
-        //For Version of Gradle lower than 4.1, you must use   maven{url 'https://maven.google.com'}
+        //For Gradle Version lower than 4.1, you must use   maven{url 'https://maven.google.com'}
         maven{
             url 'https://maven.google.com'
         }

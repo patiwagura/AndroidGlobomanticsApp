@@ -11,11 +11,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.alexr.ideamanager.helpers.SampleContent;
 import com.example.alexr.ideamanager.models.Idea;
+import com.example.alexr.ideamanager.services.IdeaService;
+import com.example.alexr.ideamanager.services.ServiceBuilder;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class IdeaListActivity extends AppCompatActivity {
 
@@ -40,22 +47,41 @@ public class IdeaListActivity extends AppCompatActivity {
             }
         });
 
-        final RecyclerView recyclerView = (RecyclerView)findViewById(R.id.idea_list);
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.idea_list);
         assert recyclerView != null;
 
         if (findViewById(R.id.idea_detail_container) != null) {
             mTwoPane = true;
         }
 
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(SampleContent.IDEAS));
+        //populating the RecyclerView with static-SampleData.
+        //recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(SampleContent.IDEAS));
+
+        //Populate the recycler view from webservice
+        IdeaService ideaService = ServiceBuilder.buildService(IdeaService.class);
+        Call<List<Idea>> ideaRequest = ideaService.getIdeas();
+
+        ideaRequest.enqueue(new Callback<List<Idea>>() {
+            @Override
+            public void onResponse(Call<List<Idea>> request, Response<List<Idea>> response) {
+                recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(response.body()));
+            }
+
+            @Override
+            public void onFailure(Call<List<Idea>> request, Throwable t) {
+                Toast.makeText(context, "Failed to retrieve Ideas.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
-//region Adapter Region
+    //region Adapter Region
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final List<Idea> mValues;
 
+        //constructor
         public SimpleItemRecyclerViewAdapter(List<Idea> items) {
             mValues = items;
         }
@@ -64,6 +90,7 @@ public class IdeaListActivity extends AppCompatActivity {
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.idea_list_content, parent, false);
+
             return new ViewHolder(view);
         }
 
