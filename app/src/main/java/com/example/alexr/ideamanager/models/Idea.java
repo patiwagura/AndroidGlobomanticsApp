@@ -7,7 +7,7 @@ public class Idea {
     private String description;
     private String owner;
 
-    //constructor
+    //Constructor
     public Idea() {
     }
 

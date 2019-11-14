@@ -30,7 +30,7 @@ public class LandingActivity extends AppCompatActivity {
 
         //Create an instance of MessageService, which will act as the implementation of the interface that maps the RESTful endPoints.
         MessageService taskService = ServiceBuilder.buildService(MessageService.class);
-        Call<String> call = taskService.getMessages();  //messageService instance used to call the RESTful webservice methods.
+        Call<String> call = taskService.getMessages("http://192.168.0.15:7000/messages");  //messageService instance used to call the RESTful webservice methods.
 
         //add reference used to call RESTful methods to an asynchronous queue managed by Retrofit.
         call.enqueue(new Callback<String>() {

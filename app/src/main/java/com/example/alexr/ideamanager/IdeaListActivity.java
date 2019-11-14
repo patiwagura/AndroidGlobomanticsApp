@@ -18,6 +18,7 @@ import com.example.alexr.ideamanager.models.Idea;
 import com.example.alexr.ideamanager.services.IdeaService;
 import com.example.alexr.ideamanager.services.ServiceBuilder;
 
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -57,9 +58,15 @@ public class IdeaListActivity extends AppCompatActivity {
         //populating the RecyclerView with static-SampleData.
         //recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(SampleContent.IDEAS));
 
+        //HashMap to store query parameters as key-value pairs.
+        HashMap<String, String> filters = new HashMap<>();
+        filters.put("owner", "Jim"); //filter by owner=Jim
+        filters.put("count", "1");  //number of records to count =1
+
         //Populate the recycler view from webservice
         IdeaService ideaService = ServiceBuilder.buildService(IdeaService.class);
-        Call<List<Idea>> ideaRequest = ideaService.getIdeas();
+        //Call<List<Idea>> ideaRequest = ideaService.getIdeas("Jim"); //parameter to filter and return only ideas created by owner="Jim".
+        Call<List<Idea>> ideaRequest = ideaService.getIdeas(filters);
 
         ideaRequest.enqueue(new Callback<List<Idea>>() {
             @Override
@@ -88,6 +95,7 @@ public class IdeaListActivity extends AppCompatActivity {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            //Called by system to create a viewItem for the RecyclerView.  => Calls  new ViewHolder(View) passing in inflated view as parameter.
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.idea_list_content, parent, false);
 
@@ -96,7 +104,7 @@ public class IdeaListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mItem = mValues.get(position);
+            holder.mItem = mValues.get(position); //retrieve idea at current-Position and bind it to view created.
             holder.mIdView.setText(Integer.toString(mValues.get(position).getId()));
             holder.mContentView.setText(mValues.get(position).getName());
 

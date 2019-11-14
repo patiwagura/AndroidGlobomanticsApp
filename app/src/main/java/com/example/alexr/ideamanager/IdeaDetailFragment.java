@@ -11,9 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.alexr.ideamanager.helpers.SampleContent;
 import com.example.alexr.ideamanager.models.Idea;
+import com.example.alexr.ideamanager.services.IdeaService;
+import com.example.alexr.ideamanager.services.ServiceBuilder;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class IdeaDetailFragment extends Fragment {
 
@@ -48,17 +55,38 @@ public class IdeaDetailFragment extends Fragment {
             Activity activity = this.getActivity();
             final CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
 
-            mItem = SampleContent.getIdeaById(getArguments().getInt(ARG_ITEM_ID));
+            //replaced by data from webService.
+            //showSampleData();
 
-            ideaName.setText(mItem.getName());
-            ideaDescription.setText(mItem.getDescription());
-            ideaOwner.setText(mItem.getOwner());
-            ideaStatus.setText(mItem.getStatus());
+            //Populate the Ui-Views with data from the WebService.
+            IdeaService ideaService = ServiceBuilder.buildService(IdeaService.class);
+            Call<Idea> request = ideaService.getIdea(getArguments().getInt(ARG_ITEM_ID));
 
-            if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.getName());
-            }
+            //onFailure and onResponse handler methods.
+            request.enqueue(new Callback<Idea>() {
+                @Override
+                public void onResponse(Call<Idea> request, Response<Idea> response) {
+                    mItem = response.body();
+
+                    ideaName.setText(mItem.getName());
+                    ideaDescription.setText(mItem.getDescription());
+                    ideaOwner.setText(mItem.getOwner());
+                    ideaStatus.setText(mItem.getStatus());
+
+                    if (appBarLayout != null) {
+                        appBarLayout.setTitle(mItem.getName());
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<Idea> request, Throwable t) {
+                    Toast.makeText(context, "Failed to retrieve item.", Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
+
 
         updateIdea.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,11 +108,29 @@ public class IdeaDetailFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 SampleContent.deleteIdea(getArguments().getInt(ARG_ITEM_ID));
-                Intent intent = new Intent(getContext(), IdeaListActivity.class);
+
+                Intent intent = new Intent(context, IdeaListActivity.class);
                 startActivity(intent);
             }
         });
 
         return rootView;
     }
+
+    //Method used to show sample Data.
+    /*
+    private void showSampleData() {
+        mItem = SampleContent.getIdeaById(getArguments().getInt(ARG_ITEM_ID));
+
+        ideaName.setText(mItem.getName());
+        ideaDescription.setText(mItem.getDescription());
+        ideaOwner.setText(mItem.getOwner());
+        ideaStatus.setText(mItem.getStatus());
+
+        if (appBarLayout != null) {
+            appBarLayout.setTitle(mItem.getName());
+        }
+
+    }
+    */
 }
