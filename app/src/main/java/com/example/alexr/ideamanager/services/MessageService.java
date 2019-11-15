@@ -8,7 +8,8 @@ public interface MessageService {
     //@GET("messages")
     //Call<String> getMessages();
 
-    //Specifying an alternative server url. @Url annotation is used to override the BASE_URL In the serviceBuilder.
+    //Specify an alternative URL to fetch data from another external server.
+    //Retrofit @Url annotation overrides the BASE_URL define in ServiceBuilder e.g getMessage(@Url String altUrl)
     @GET
-    Call<String> getMessages(@Url String altUrl);
+    Call<String> getMessages(@Url String altUrl);  //Retrofit will override the BASE_URL
 }

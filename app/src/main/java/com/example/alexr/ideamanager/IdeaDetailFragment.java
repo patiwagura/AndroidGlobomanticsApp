@@ -91,16 +91,41 @@ public class IdeaDetailFragment extends Fragment {
         updateIdea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /*
                 Idea newIdea = new Idea();
                 newIdea.setId(getArguments().getInt(ARG_ITEM_ID));
                 newIdea.setName(ideaName.getText().toString());
                 newIdea.setDescription(ideaDescription.getText().toString());
                 newIdea.setStatus(ideaStatus.getText().toString());
                 newIdea.setOwner(ideaOwner.getText().toString());
+                */
 
-                SampleContent.updateIdea(newIdea);
-                Intent intent = new Intent(getContext(), IdeaListActivity.class);
-                startActivity(intent);
+                //Update the Idea and save changes to SampleContent in Memory.
+                //SampleContent.updateIdea(newIdea);
+
+                //Make a call to RESTful webService update and save the Idea.
+                IdeaService ideaService = ServiceBuilder.buildService(IdeaService.class);
+                Call<Idea> updateRequest = ideaService.updateIdea(
+                        getArguments().getInt(ARG_ITEM_ID),
+                        ideaName.getText().toString(),
+                        ideaDescription.getText().toString(),
+                        ideaStatus.getText().toString(),
+                        ideaOwner.getText().toString()
+                );
+
+                updateRequest.enqueue(new Callback<Idea>() {
+                    @Override
+                    public void onResponse(Call<Idea> request, Response<Idea> response) {
+                        Intent intent = new Intent(context, IdeaListActivity.class);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Idea> request, Throwable t) {
+                        Toast.makeText(context, "Failed to Retrieve item.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
         });
 

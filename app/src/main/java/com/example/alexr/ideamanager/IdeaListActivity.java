@@ -60,8 +60,8 @@ public class IdeaListActivity extends AppCompatActivity {
 
         //HashMap to store query parameters as key-value pairs.
         HashMap<String, String> filters = new HashMap<>();
-        filters.put("owner", "Jim"); //filter by owner=Jim
-        filters.put("count", "1");  //number of records to count =1
+        //filters.put("owner", "Jim"); //filter by owner=Jim
+        //filters.put("count", "1");  //number of records to count =1
 
         //Populate the recycler view from webservice
         IdeaService ideaService = ServiceBuilder.buildService(IdeaService.class);
